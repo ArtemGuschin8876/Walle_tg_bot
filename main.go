@@ -1,14 +1,26 @@
 package main
 
 import (
+	"fmt"
 	"log"
-
+	"os"
+	"github.com/joho/godotenv"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
 func main() {
-	bot, err := tgbotapi.NewBotAPI("")
+	err := godotenv.Load()
 	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	token := os.Getenv("TokenBot")
+	if token == "" {
+        log.Fatal("Токен бота не найден в переменной окружения")
+    }
+
+	bot, err := tgbotapi.NewBotAPI(token)
+	if err != nil {
+		fmt.Println("Ошибка при создании бота", err)
 		log.Panic(err)
 	}
 
