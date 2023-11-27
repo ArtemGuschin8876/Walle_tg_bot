@@ -24,20 +24,21 @@ func main() {
 		fmt.Println("Ошибка при создании бота", err)
 		log.Panic(err)
 	}
-	
+
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
+	//Upd
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
-
 	updates := bot.GetUpdatesChan(u)
 
+	// Logger
 	logFile, err := os.Create("chat_logs.txt")
 	if err != nil{
 		log.Fatal(err)
 	}
 	defer logFile.Close()
-
+	fmt.Println("Logger working...")
 	logger := log.New(logFile, "", log.LstdFlags)
 
 
