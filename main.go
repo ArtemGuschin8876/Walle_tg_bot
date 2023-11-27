@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"github.com/joho/godotenv"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -23,7 +24,7 @@ func main() {
 		fmt.Println("Ошибка при создании бота", err)
 		log.Panic(err)
 	}
-
+	
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
 	u := tgbotapi.NewUpdate(0)
@@ -31,19 +32,32 @@ func main() {
 
 	updates := bot.GetUpdatesChan(u)
 
+	logFile, err := os.Create("chat_logs.txt")
+	if err != nil{
+		log.Fatal(err)
+	}
+	defer logFile.Close()
+
+	logger := log.New(logFile, "", log.LstdFlags)
+
+
 	for update := range updates {
 		if update.Message != nil {
 			text := update.Message.Text      
 			chatID := update.Message.Chat.ID 
 			userID := update.Message.From.ID 
-			var replyMsg string
 
+			var replyMsg string
+		
 			log.Printf("[%s](%d) %s", update.Message.From.UserName, userID, text)
 
-			msg := tgbotapi.NewMessage(chatID, replyMsg) 
-			msg.ReplyToMessageID = update.Message.MessageID 
+			msg := tgbotapi.NewMessage(chatID, replyMsg)
+			msg.ReplyToMessageID = update.Message.MessageID
 
 			bot.Send(msg)
 		}
+
+	logger.Printf("[%s], %s", update.Message.From.UserName, update.Message.Text)
+		
 	}
 }
