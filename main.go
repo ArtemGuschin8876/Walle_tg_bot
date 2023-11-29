@@ -16,8 +16,8 @@ func main() {
 	}
 	token := os.Getenv("TokenBot")
 	if token == "" {
-        log.Fatal("Токен бота не найден в переменной окружения")
-    }
+		log.Fatal("Токен бота не найден в переменной окружения")
+	}
 
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
@@ -34,31 +34,33 @@ func main() {
 
 	// Logger
 	logFile, err := os.Create("chat_logs.txt")
-	if err != nil{
+	if err != nil {
 		log.Fatal(err)
 	}
 	defer logFile.Close()
 	fmt.Println("Logger working...")
 	logger := log.New(logFile, "", log.LstdFlags)
 
-
 	for update := range updates {
 		if update.Message != nil {
-			text := update.Message.Text      
-			chatID := update.Message.Chat.ID 
-			userID := update.Message.From.ID 
+			text := update.Message.Text
+			chatID := update.Message.Chat.ID
+			userID := update.Message.From.ID
 
 			var replyMsg string
-		
-			log.Printf("[%s](%d) %s", update.Message.From.UserName, userID, text)
 
+			log.Printf("[%s](%d) %s", update.Message.From.UserName, userID, text)
+			
 			msg := tgbotapi.NewMessage(chatID, replyMsg)
 			msg.ReplyToMessageID = update.Message.MessageID
 
 			bot.Send(msg)
 		}
+		logger.Printf("[%s] [%d]\n %s", update.Message.From.UserName, update.Message.From.ID, update.Message.Text)
 
-	logger.Printf("[%s], %s", update.Message.From.UserName, update.Message.Text)
-		
 	}
 }
+
+
+
+
